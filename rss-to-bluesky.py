@@ -102,10 +102,10 @@ def post_text(text, atp_auth_token, did, timestamp=None):
             },
         ]
 
-        embed = {
-            "$type": "app.bsky.embed.external",
-            "external": fetch_external_embed(uri)
-         }
+        #embed = {
+        #    "$type": "app.bsky.embed.external",
+        #    "external": fetch_external_embed(uri)
+        # }
 
     data = {
         "collection": "app.bsky.feed.post",
