@@ -1,24 +1,18 @@
-import os
+from dotenv import load_dotenv
+import requests
+import datetime
 import re
 import feedparser
-import requests
-from dotenv import load_dotenv
-import threading
+import os
 import time
-import datetime
+from uniseg.graphemecluster import grapheme_clusters
 
-# Load .env file
 load_dotenv()
 
-#####
 ATP_HOST = os.getenv('ATP_HOST')
 ATP_USERNAME = os.getenv('ATP_USERNAME')
 ATP_PASSWORD = os.getenv('ATP_PASSWORD')
 RSS_FEED_URL = os.getenv('RSS_FEED_URL')
-######
-
-# this will store the latest post we've found
-latest_post = None
 
 def fetch_latest_rss_entry(rss_url):
     feed = feedparser.parse(rss_url)
@@ -49,6 +43,13 @@ def fetch_external_embed(uri):
         print(f"Error: {e}")
         return None
 
+def trim_text(text, max_length=300):
+    clusters = list(grapheme_clusters(text))
+    if len(clusters) <= max_length:
+        return text
+    else:
+        return "".join(clusters[:max_length])
+
 def find_uri_position(text):
     pattern = r'(https?://\S+)'
     match = re.search(pattern, text)
@@ -77,6 +78,7 @@ def login(username, password):
     return atp_auth_token, did
 
 def post_text(text, atp_auth_token, did, timestamp=None):
+    text = trim_text(text)  # trim the text
     if not timestamp:
         timestamp = datetime.datetime.now(datetime.timezone.utc)
     timestamp = timestamp.isoformat().replace('+00:00', 'Z')
@@ -100,11 +102,13 @@ def post_text(text, atp_auth_token, did, timestamp=None):
                 ]
             },
         ]
-
         embed = {
             "$type": "app.bsky.embed.external",
             "external": fetch_external_embed(uri)
         }
+    else:
+        facets = None
+        embed = None
 
     data = {
         "collection": "app.bsky.feed.post",
@@ -127,23 +131,26 @@ def post_text(text, atp_auth_token, did, timestamp=None):
 
     return resp
 
-def check_rss_feed():
-    global latest_post
+def main():
     while True:
         latest_entry = fetch_latest_rss_entry(RSS_FEED_URL)
-        if latest_entry != latest_post:
-            latest_post = latest_entry
-            title = latest_entry.title
-            link = latest_entry.link
-            post_content = f"New Update:\n{title} {link} #Ukraine"
-            atp_auth_token, did = login(ATP_USERNAME,  ATP_PASSWORD)
-            post_resp = post_text(post_content, atp_auth_token, did)
-            print(f"Posted: {post_resp.json()}")
-        time.sleep(15 * 60)  # wait for 15 minutes
 
-def main():
-    t = threading.Thread(target=check_rss_feed)
-    t.start()
+        title = latest_entry.title
+        link = latest_entry.link
+        post_content = f"New blog post: {title} {link}"
+
+        atp_auth_token, did = login(ATP_USERNAME, ATP_PASSWORD)
+        post_resp = post_text(post_content, atp_auth_token, did)
+        print(post_resp.json())
+
+        time.sleep(300)  # Sleep for 5 minutes (300 seconds)
+
+def lambda_handler(event, context):
+    main()
+    return {
+        "statusCode": 200,
+        "body": "Success"
+    }
 
 if __name__ == "__main__":
     main()
