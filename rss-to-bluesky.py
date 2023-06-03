@@ -78,7 +78,6 @@ def login(username, password):
     return atp_auth_token, did
 
 def post_text(text, atp_auth_token, did, timestamp=None):
-    text = trim_text(text)  # trim the text
     if not timestamp:
         timestamp = datetime.datetime.now(datetime.timezone.utc)
     timestamp = timestamp.isoformat().replace('+00:00', 'Z')
@@ -102,15 +101,11 @@ def post_text(text, atp_auth_token, did, timestamp=None):
                 ]
             },
         ]
-        embed = fetch_external_embed(uri)
-        if embed:
-            embed = {
-                "$type": "app.bsky.embed.external",
-                "external": embed
-            }
-    else:
-        facets = None
-        embed = None
+
+        embed = {
+            "$type": "app.bsky.embed.external",
+            "external": fetch_external_embed(uri)
+         }
 
     data = {
         "collection": "app.bsky.feed.post",
@@ -139,7 +134,7 @@ def main():
 
         title = latest_entry.title
         link = latest_entry.link
-        post_content = f"New blog post: {title} {link}"
+        post_content = f"{title} {link} #Ukraine"
 
         atp_auth_token, did = login(ATP_USERNAME, ATP_PASSWORD)
         post_resp = post_text(post_content, atp_auth_token, did)
