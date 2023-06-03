@@ -134,7 +134,7 @@ def main():
 
         title = latest_entry.title
         link = latest_entry.link
-        post_content = f"{title} {link} #Ukraine"
+        post_content = f"{title} {link}"
 
         atp_auth_token, did = login(ATP_USERNAME, ATP_PASSWORD)
         post_resp = post_text(post_content, atp_auth_token, did)
