@@ -14,3 +14,11 @@ pip install -r requirements.txt
 
 ## Run
 python3 rss-to-bluesky.py
+
+
+## known bugs
+
+- {'error': 'InvalidRequest', 'message': 'Invalid app.bsky.feed.post record: Record/text must not be longer than 300 graphemes'}
+
+- Error fetching the website (when embed is enabled)
+{'error': 'InvalidRequest', 'message': 'Invalid app.bsky.feed.post record: Record/embed/external must be an object'}
