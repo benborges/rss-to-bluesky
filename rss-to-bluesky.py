@@ -102,10 +102,12 @@ def post_text(text, atp_auth_token, did, timestamp=None):
                 ]
             },
         ]
-        embed = {
-            "$type": "app.bsky.embed.external",
-            "external": fetch_external_embed(uri)
-        }
+        embed = fetch_external_embed(uri)
+        if embed:
+            embed = {
+                "$type": "app.bsky.embed.external",
+                "external": embed
+            }
     else:
         facets = None
         embed = None
