@@ -24,3 +24,5 @@ python3 rss-to-bluesky.py
 
 - Error fetching the website (when embed is enabled)
 {'error': 'InvalidRequest', 'message': 'Invalid app.bsky.feed.post record: Record/embed/external must be an object'}
+- 5 minutes might be too short for most RSS feeds, if/when no new posts the code output the last item, it should not!
+known items should not be posted twice. 
