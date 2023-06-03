@@ -116,7 +116,7 @@ def post_text(text, atp_auth_token, did, timestamp=None):
             "createdAt": timestamp,
             "text": text,
             "facets": facets,
-            "embed": embed
+            #"embed": embed
         }
     }
 
