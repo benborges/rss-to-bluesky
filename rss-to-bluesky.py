@@ -140,7 +140,8 @@ def main():
         post_resp = post_text(post_content, atp_auth_token, did)
         print(post_resp.json())
 
-        time.sleep(300)  # Sleep for 5 minutes (300 seconds)
+        time.sleep(15 * 60)  # wait for 15 minutes
+        #time.sleep(300)  # Sleep for 5 minutes (300 seconds)
 
 def lambda_handler(event, context):
     main()
