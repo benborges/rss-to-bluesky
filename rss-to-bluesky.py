@@ -43,7 +43,7 @@ def fetch_external_embed(uri):
         print(f"Error: {e}")
         return None
 
-def trim_text(text, max_length=300):
+def trim_text(text, max_length=250):
     clusters = list(grapheme_clusters(text))
     if len(clusters) <= max_length:
         return text
