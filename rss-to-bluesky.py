@@ -12,7 +12,12 @@ load_dotenv()
 ATP_HOST = os.getenv('ATP_HOST')
 ATP_USERNAME = os.getenv('ATP_USERNAME')
 ATP_PASSWORD = os.getenv('ATP_PASSWORD')
-RSS_FEED_URLS = os.getenv('RSS_FEED_URLS').split(';')  # split the URLs by semicolon
+RSS_FEED_URLS = os.getenv('RSS_FEED_URLS')
+if RSS_FEED_URLS is None:
+    print("RSS_FEED_URLS not found. Please check your .env file.")
+    exit(1)
+else:
+    RSS_FEED_URLS = RSS_FEED_URLS.split(';') # split the URLs by semicolon
 
 latest_posts = [None for _ in range(len(RSS_FEED_URLS))]  # initialize with None for each RSS feed
 
